@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 namespace Champlin.DataLayer
 {
     public class CosmosContext
+
     {
         public CosmosClient Client;
         private readonly IOptions<CosmosContextSettings> _contextSettings;
@@ -23,8 +24,12 @@ namespace Champlin.DataLayer
         public void BuildClient()
         {
             var builder = new CosmosClientBuilder(_contextSettings.Value.ConnectionString);
-            builder.WithApplicationName(_contextSettings.Value.ApplicationName);
-            builder.AddCustomHandlers(_contextSettings.Value.Handlers);
+            
+            if(!string.IsNullOrEmpty(_contextSettings.Value.ApplicationName))
+                builder.WithApplicationName(_contextSettings.Value.ApplicationName);
+            
+            if(_contextSettings.Value.Handlers != null)
+                builder.AddCustomHandlers(_contextSettings.Value.Handlers);
 
             Client = builder.Build();
         }

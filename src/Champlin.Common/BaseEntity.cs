@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace Champlin.Common
 {
+    [Serializable]
     public class BaseEntity
     {
         [JsonProperty("id")]

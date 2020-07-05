@@ -5,6 +5,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="9.31.1" />
+    <PackageReference Include="MatBlazor" Version="2.6.0" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>

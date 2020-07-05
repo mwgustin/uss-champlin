@@ -1,7 +1,146 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@using Champlin.Common
+@using System.Collections.Generic
+@using Champlin.CrewManager.Components
+@using MatBlazor
+@inject IRepository<Crew> CrewRepo
 
-Welcome to your new app.
+<h1>Crew List</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if(crewList == null)
+{
+    <p><em>Loading...</em></p>
+    <MatProgressBar Indeterminate="true"></MatProgressBar>
+}
+else
+{
+    <MatTable Items="@crewList.OrderBy(x => x.OriginalUrl)" class="mat-elevation-z5" PageSize=100 FilterByColumnName="Name">
+    <MatTableHeader>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Orig Url</th>
+        <th>Date Of Birth</th>
+        <th>Date Of Death</th>
+        <th>Service Number</th>
+        <th>Rank</th>
+        <th>Edit</th>
+    </MatTableHeader>
+    <MatTableRow>
+        <td>@context.Id</td>
+        <td>@context.Name</td>
+        <td>@context.OriginalUrl</td>
+        <td>@context.DateOfBirth</td>
+        <td>@context.DateOfDeath</td>
+        <td>@context.ServiceNumber</td>
+        <td>@context.Rank</td>
+        <td><MatButton OnClick="@(e => { EditCrew(@context.Id); })" Raised="true">Edit</MatButton></td>
+    </MatTableRow>
+    </MatTable>
+
+
+    <MatDialog @bind-IsOpen="@isEditing">
+        @if(selectedCrew != null)
+        {
+            <MatDialogTitle>Editing @selectedCrew.Name</MatDialogTitle>
+            <MatDialogContent>
+                @if(!string.IsNullOrEmpty(selectedCrew.PictureUrl))
+                {
+                    <p><img src="@selectedCrew.PictureUrl" /></p>
+                }
+                <p><MatButton Target="_blank" Link="@selectedCrew.OriginalUrl">View Original Page</MatButton></p>
+                <p><MatTextField @bind-Value="@selectedCrew.Id" Label="Id" ReadOnly="true"></MatTextField></p>           
+                <p><MatTextField @bind-Value="@selectedCrew.Name" Label="Name"></MatTextField></p>           
+                <p><MatTextField @bind-Value="@selectedCrew.PictureUrl" Label="Picture Url"></MatTextField></p>            
+                <p><MatTextField @bind-Value="@selectedCrew.DateOfBirth" Label="Date of Birth"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.Rank" Label="Rank"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.ServiceNumber" Label="Service Number"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.DateOfEnlistment" Label="Date of Enlistment"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.PlaceOfEnlistment" Label="Place of Enlistment"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.DateOnShip" Label="Date on ship"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.DateOffShip" Label="Date off ship"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.DateDischarged" Label="Date Discharged"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.DateOfDeath" Label="Date of Death"></MatTextField></p>
+                <p><MatTextField @bind-Value="@selectedCrew.Spouse" Label="Spouse"></MatTextField></p>
+                <MatAccordion>
+                    <ListEditor Name="Children" ItemList="@selectedCrew.Children"></ListEditor> 
+                    <ListEditor Name="Grandchildren" ItemList="@selectedCrew.Grandchildren"></ListEditor> 
+                    <ListEditor Name="Great Grandchildren" ItemList="@selectedCrew.GreatGrandchildren"></ListEditor> 
+                    <ListEditor Name="High School" ItemList="@selectedCrew.HighSchool"></ListEditor> 
+                    <ListEditor Name="College" ItemList="@selectedCrew.College"></ListEditor> 
+                    <ListEditor Name="Interests" ItemList="@selectedCrew.Interests"></ListEditor> 
+                </MatAccordion>
+                <br />
+                <p><MatTextField @bind-Value="@selectedCrew.PostWarExperience" Dense="true" FullWidth="true" Label="Post War Experience" TextArea="true" Style='height: 500px'></MatTextField></p>
+                
+                @if(isSubmittingChange) { <p>Submitting...</p> }             
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton OnClick="@(e => { initTempVariables(); })">Cancel</MatButton>
+                <MatButton OnClick="@OkClick">Submit</MatButton>
+            </MatDialogActions>
+        }
+        else
+        {
+            <p><em>Problem selecting crew</em></p>
+        }
+    </MatDialog>
+}
+
+@code {
+    private List<Crew> crewList;
+    private Crew selectedCrew;
+    private bool isEditing = false;
+    private bool isSubmittingChange = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchCrewData();
+    }
+
+
+    private async Task OkClick()
+    {
+
+        var response = await CrewRepo.UpserItemAsync(selectedCrew); 
+        @* var response = selectedCrew; *@
+        var origCrew = crewList.Where(x => x.Id == selectedCrew.Id).FirstOrDefault();
+        crewList.Remove(origCrew);
+        crewList.Add(response);
+
+        initTempVariables();
+    }
+
+    private void initTempVariables()
+    {
+        selectedCrew = null;
+        isEditing = false;
+    }
+
+    private void EditCrew(string id)
+    {
+        var crewRef  = crewList.Where(x => x.Id == id).FirstOrDefault();
+        if(crewRef != null)
+        {
+            selectedCrew = Utilities.DeepClone<Crew>(crewRef);
+        }
+        isEditing = true;
+    }
+
+
+    private async Task FetchCrewData()
+    {
+        crewList = await CrewRepo.GetByRawQueryAsync("select * from c");
+
+        @* crewList = new List<Crew>()
+        {
+            new Crew()
+            {
+                Name = "Test Crew",
+                OriginalUrl = "http://www.usschamplin.com/testcrew.html",
+                PictureUrl = "",
+                ServiceNumber = "12345"
+            }
+        }; *@
+    }
+}

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using ElectronNET.API;
 using Champlin.DataLayer;
 using Champlin.Common;
+using System.Net.Http;
 
 namespace Champlin.CrewManager
 {
@@ -22,6 +23,9 @@ namespace Champlin.CrewManager
         }
 
         public IConfiguration Configuration { get; }
+        
+        //npx electron-builder  --config=./bin/electron-builder.json --win --x64 --config.electronVersion=9.0.3
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -41,6 +45,19 @@ namespace Champlin.CrewManager
 
             services.AddSingleton<CosmosContext>();
             services.AddTransient<IRepository<Crew>, CosmosRepository<Crew>>();
+
+            if (services.All(x => x.ServiceType != typeof(HttpClient)))
+            {
+                services.AddScoped(
+                    s =>
+                    {
+                        var navigationManager = s.GetRequiredService<NavigationManager>();
+                        return new HttpClient
+                        {
+                            BaseAddress = new Uri(navigationManager.BaseUri)
+                        };
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

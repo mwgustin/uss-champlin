@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Champlin.Common
 {
+    [Serializable]
     public class Crew : BaseEntity
     {
         public string OriginalUrl { get; set; }

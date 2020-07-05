@@ -1,0 +1,29 @@
+@using System.Collections.Generic
+@using MatBlazor
+
+<MatExpansionPanel>
+    <MatExpansionPanelSummary>
+        <MatExpansionPanelHeader>@Name</MatExpansionPanelHeader>
+    </MatExpansionPanelSummary>
+    <MatExpansionPanelDetails>
+        @if(ItemList != null && ItemList.Count > 0)
+        {
+        <MatList>
+            @foreach (var item in ItemList)
+            {
+            <MatListItem>@item  <MatIconButton Icon="remove" OnClick="@(e => {ItemList.Remove(item);})"></MatIconButton></MatListItem>
+            }
+        </MatList>
+        }
+        <p><MatTextField @bind-Value="@tempItem"></MatTextField><MatButton OnClick="@(e => { if(ItemList == null) ItemList = new List<string>(); ItemList.Add(tempItem); })">Add</MatButton></p>
+    </MatExpansionPanelDetails>
+</MatExpansionPanel>
+
+@code {
+
+    [Parameter]
+    public List<string> ItemList {get; set;}
+    [Parameter]
+    public string Name { get; set; }
+    private string tempItem;
+}
