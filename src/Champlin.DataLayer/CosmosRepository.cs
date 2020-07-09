@@ -33,7 +33,7 @@ namespace Champlin.DataLayer
         public async Task<List<T>> GetBySpecificationAsync(ISpecification<T> spec)
         {
             var queryable = await ApplySpecification(spec);
-            var iterator = queryable.ToFeedIterator();
+            var iterator = queryable.Where(x => x.Type == CosmosHelpers.GetType<T>()).ToFeedIterator();
             return await IterateItemsAsync(iterator);
         }
 
@@ -53,7 +53,7 @@ namespace Champlin.DataLayer
         {
             var queryable = _container.GetItemLinqQueryable<T>();
             return await SpecificationEvaluator<T>.GetQuery(queryable, specification);
-
+            
         }
 
         private async Task<List<T>> IterateItemsAsync(FeedIterator<T> iterator)
