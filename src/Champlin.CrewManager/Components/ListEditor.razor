@@ -15,7 +15,7 @@
             }
         </MatList>
         }
-        <p><MatTextField @bind-Value="@tempItem"></MatTextField><MatButton OnClick="@(e => { if(ItemList == null) ItemList = new List<string>(); ItemList.Add(tempItem); })">Add</MatButton></p>
+        <p><MatTextField @bind-Value="@tempItem"></MatTextField><MatButton OnClick="@(e => {addItem(tempItem);})">Add</MatButton></p>
     </MatExpansionPanelDetails>
 </MatExpansionPanel>
 
@@ -24,6 +24,25 @@
     [Parameter]
     public List<string> ItemList {get; set;}
     [Parameter]
+    public EventCallback<List<string>> ItemListChanged {get; set;}
+    [Parameter]
     public string Name { get; set; }
     private string tempItem;
+
+    private async Task addItem(string item)
+    {
+        if (ItemList == null)
+        {
+            ItemList = new List<string>();
+        }
+        ItemList.Add(item);
+
+        await ItemListChanged.InvokeAsync(ItemList);
+    }
+
+    private async Task removeItem(string item)
+    {
+        ItemList.Remove(item);
+        await ItemListChanged.InvokeAsync(ItemList);
+    }
 }

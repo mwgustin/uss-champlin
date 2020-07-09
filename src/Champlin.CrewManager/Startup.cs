@@ -24,6 +24,7 @@ namespace Champlin.CrewManager
 
         public IConfiguration Configuration { get; }
         
+        //in bin\desktop\win directory
         //npx electron-builder  --config=./bin/electron-builder.json --win --x64 --config.electronVersion=9.0.3
 
 

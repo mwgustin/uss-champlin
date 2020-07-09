@@ -63,12 +63,12 @@ else
                 <p><MatTextField @bind-Value="@selectedCrew.DateOfDeath" Label="Date of Death"></MatTextField></p>
                 <p><MatTextField @bind-Value="@selectedCrew.Spouse" Label="Spouse"></MatTextField></p>
                 <MatAccordion>
-                    <ListEditor Name="Children" ItemList="@selectedCrew.Children"></ListEditor> 
-                    <ListEditor Name="Grandchildren" ItemList="@selectedCrew.Grandchildren"></ListEditor> 
-                    <ListEditor Name="Great Grandchildren" ItemList="@selectedCrew.GreatGrandchildren"></ListEditor> 
-                    <ListEditor Name="High School" ItemList="@selectedCrew.HighSchool"></ListEditor> 
-                    <ListEditor Name="College" ItemList="@selectedCrew.College"></ListEditor> 
-                    <ListEditor Name="Interests" ItemList="@selectedCrew.Interests"></ListEditor> 
+                    <ListEditor Name="Children" @bind-ItemList="@selectedCrew.Children"></ListEditor> 
+                    <ListEditor Name="Grandchildren" @bind-ItemList="@selectedCrew.Grandchildren"></ListEditor> 
+                    <ListEditor Name="Great Grandchildren" @bind-ItemList="@selectedCrew.GreatGrandchildren"></ListEditor> 
+                    <ListEditor Name="High School" @bind-ItemList="@selectedCrew.HighSchool"></ListEditor> 
+                    <ListEditor Name="College" @bind-ItemList="@selectedCrew.College"></ListEditor> 
+                    <ListEditor Name="Interests" @bind-ItemList="@selectedCrew.Interests"></ListEditor> 
                 </MatAccordion>
                 <br />
                 <p><MatTextField @bind-Value="@selectedCrew.PostWarExperience" Dense="true" FullWidth="true" Label="Post War Experience" TextArea="true" Style='height: 500px'></MatTextField></p>
