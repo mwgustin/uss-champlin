@@ -11,6 +11,7 @@ var request = new XMLHttpRequest();
 request.open('GET', 'https://uss-champlin-api.azurewebsites.net/api/GetCrewItem?origUrl=http://www.usschamplin.com' + queryDict["crewUrl"] + '.html', true);
 
 request.onload = function (){
+    document.getElementById("cover").remove();
     if(request.status >= 200 && request.status < 400) {
         var data = JSON.parse(this.response);
         updatePage(data);
